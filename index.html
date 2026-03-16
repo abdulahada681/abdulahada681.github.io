@@ -3,10 +3,599 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title> 
+    <meta name="description" content="Abdul Ahad - Web Developer Portfolio">
+    <title>Abdul Ahad | 3D Web Developer Portfolio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=Manrope:wght@400;500;700&display=swap');
+
+        :root {
+            --bg: #050505;
+            --panel: #0f0f0f;
+            --text: #f2f2f2;
+            --muted: #9f9f9f;
+            --line: #272727;
+            --accent: #d5d5d5;
+            --radius: 20px;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            scroll-behavior: smooth;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Manrope', sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.08), transparent 45%),
+                radial-gradient(circle at 90% 70%, rgba(255, 255, 255, 0.05), transparent 45%);
+        }
+
+        canvas#webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.12;
+            background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+            background-size: 3px 3px;
+            mix-blend-mode: overlay;
+        }
+
+        .site {
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1120px, calc(100% - 24px));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(8, 8, 8, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            backdrop-filter: blur(10px);
+            z-index: 5;
+        }
+
+        .brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            font-size: 0.9rem;
+        }
+
+        .links {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+        }
+
+        .links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: var(--text);
+        }
+
+        section {
+            width: min(1120px, calc(100% - 24px));
+            margin: 0 auto;
+            padding: 110px 0;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            align-content: center;
+            gap: 24px;
+            padding-top: 140px;
+        }
+
+        .eyebrow {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-size: 0.72rem;
+        }
+
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.6rem, 9vw, 7rem);
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            max-width: 12ch;
+        }
+
+        .outline {
+            color: transparent;
+            -webkit-text-stroke: 1px #e8e8e8;
+        }
+
+        .hero p {
+            color: var(--muted);
+            max-width: 62ch;
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
+            line-height: 1.7;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 1px solid var(--line);
+            color: var(--text);
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            transition: transform 0.25s ease, border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(12, 1fr);
+        }
+
+        .card {
+            background: linear-gradient(145deg, rgba(25, 25, 25, 0.85), rgba(13, 13, 13, 0.85));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease;
+        }
+
+        .card h3 {
+            font-family: 'Syne', sans-serif;
+            margin-bottom: 8px;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .about .a {
+            grid-column: span 7;
+        }
+
+        .about .b {
+            grid-column: span 5;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.6rem);
+            margin-bottom: 24px;
+            line-height: 1;
+        }
+
+        .skills-wrap {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .skill {
+            padding: 22px;
+        }
+
+        .skill strong {
+            font-family: 'Syne', sans-serif;
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .projects {
+            position: relative;
+        }
+
+        .project {
+            margin-bottom: 16px;
+            min-height: 220px;
+        }
+
+        .project small {
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .project h4 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.55rem;
+            margin: 8px 0 10px;
+        }
+
+        .project .meta {
+            color: #d0d0d0;
+            font-size: 0.88rem;
+        }
+
+        .contact {
+            padding-bottom: 80px;
+        }
+
+        .contact-card {
+            text-align: center;
+            padding: 56px 24px;
+        }
+
+        .contact a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .footer {
+            text-align: center;
+            color: #9b9b9b;
+            font-size: 0.82rem;
+            padding: 0 12px 28px;
+        }
+
+        @media (max-width: 900px) {
+            .about .a,
+            .about .b {
+                grid-column: span 12;
+            }
+
+            .skills-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .links {
+                display: none;
+            }
+
+            section {
+                padding: 92px 0;
+            }
+
+            .hero {
+                min-height: 88vh;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>abdul ahad </h1>
+    <canvas id="webgl" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div class="site">
+        <nav class="nav">
+            <div class="brand">ABDUL AHAD</div>
+            <ul class="links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <section class="hero" id="home">
+            <span class="eyebrow">3D Web Developer Portfolio</span>
+            <h1>
+                Crafting
+                <span class="outline">Immersive</span>
+                Web Experiences
+            </h1>
+            <p>
+                I am Abdul Ahad, a web developer focused on modern interfaces, advanced animations, and high-performance
+                front-end architecture. I blend design precision with creative code to build unforgettable digital products.
+            </p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn">View Projects</a>
+                <a href="#contact" class="btn">Hire Me</a>
+            </div>
+        </section>
+
+        <section class="about" id="about">
+            <h2 class="section-title">About Me</h2>
+            <div class="grid">
+                <article class="card a tilt-card">
+                    <h3>Creative Developer with a Product Mindset</h3>
+                    <p>
+                        I build pixel-accurate, conversion-focused experiences with React, JavaScript, and animation libraries.
+                        My goal is not only to make interfaces look premium but also feel alive, fast, and intuitive on every device.
+                    </p>
+                </article>
+                <article class="card b tilt-card">
+                    <h3>Core Focus</h3>
+                    <p>
+                        3D visuals, GSAP timelines, responsive design systems, and clean front-end architecture that scales.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section id="skills">
+            <h2 class="section-title">Skills</h2>
+            <div class="skills-wrap">
+                <article class="card skill tilt-card">
+                    <strong>Frontend Engineering</strong>
+                    <p>HTML, CSS, JavaScript, React, component architecture, accessibility-first UI.</p>
+                </article>
+                <article class="card skill tilt-card">
+                    <strong>Animation & Interaction</strong>
+                    <p>GSAP, ScrollTrigger, timeline choreography, parallax systems, motion direction.</p>
+                </article>
+                <article class="card skill tilt-card">
+                    <strong>3D for Web</strong>
+                    <p>Three.js scenes, lighting, particles, shader-ready structures, performance optimization.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="projects" id="projects">
+            <h2 class="section-title">Selected Work</h2>
+            <article class="card project">
+                <small>01 / Portfolio Platform</small>
+                <h4>Interactive Personal Brand Site</h4>
+                <p>Built an animated narrative portfolio with cinematic scroll transitions and 3D background elements.</p>
+                <p class="meta">Stack: HTML, CSS, JavaScript, Three.js, GSAP</p>
+            </article>
+            <article class="card project">
+                <small>02 / Product Experience</small>
+                <h4>Conversion-Centered Landing Experience</h4>
+                <p>Designed and developed a performance-first landing page with storytelling sections and reusable UI blocks.</p>
+                <p class="meta">Stack: React, Tailwind, GSAP</p>
+            </article>
+            <article class="card project">
+                <small>03 / UI System</small>
+                <h4>Design System with Motion Principles</h4>
+                <p>Created a scalable UI kit that unified components, typography, spacing, and interaction behavior.</p>
+                <p class="meta">Stack: Figma, CSS, JavaScript</p>
+            </article>
+        </section>
+
+        <section class="contact" id="contact">
+            <article class="card contact-card">
+                <h2 class="section-title">Let Us Build Something Iconic</h2>
+                <p style="color: var(--muted); margin-bottom: 18px;">Available for freelance and full-time opportunities.</p>
+                <p><a href="mailto:abdulahad@example.com">abdulahad@example.com</a></p>
+            </article>
+        </section>
+        <p class="footer">© 2026 Abdul Ahad. Designed and developed with advanced 3D and motion.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const canvas = document.getElementById('webgl');
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 8);
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        directionalLight.position.set(3, 4, 5);
+        scene.add(directionalLight);
+
+        const masterGroup = new THREE.Group();
+        scene.add(masterGroup);
+
+        const knot = new THREE.Mesh(
+            new THREE.TorusKnotGeometry(1.6, 0.38, 240, 32),
+            new THREE.MeshStandardMaterial({
+                color: 0xdcdcdc,
+                roughness: 0.35,
+                metalness: 0.75,
+                wireframe: true
+            })
+        );
+        masterGroup.add(knot);
+
+        const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(2.8, 0.03, 20, 140),
+            new THREE.MeshBasicMaterial({ color: 0x7e7e7e })
+        );
+        ring.rotation.x = Math.PI * 0.5;
+        masterGroup.add(ring);
+
+        const particleCount = 900;
+        const particlesGeo = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 24;
+            positions[i + 1] = (Math.random() - 0.5) * 24;
+            positions[i + 2] = (Math.random() - 0.5) * 24;
+        }
+
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const particles = new THREE.Points(
+            particlesGeo,
+            new THREE.PointsMaterial({
+                color: 0xcfcfcf,
+                size: 0.028,
+                transparent: true,
+                opacity: 0.9
+            })
+        );
+        scene.add(particles);
+
+        const floatingPanels = [];
+        for (let i = 0; i < 8; i++) {
+            const panel = new THREE.Mesh(
+                new THREE.PlaneGeometry(0.95, 0.52),
+                new THREE.MeshBasicMaterial({
+                    color: i % 2 === 0 ? 0x6e6e6e : 0xababab,
+                    transparent: true,
+                    opacity: 0.2,
+                    side: THREE.DoubleSide
+                })
+            );
+            panel.position.set(
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 6,
+                (Math.random() - 0.5) * 6
+            );
+            panel.rotation.set(Math.random() * 1.2, Math.random() * 1.2, Math.random() * 1.2);
+            floatingPanels.push(panel);
+            scene.add(panel);
+        }
+
+        const mouse = { x: 0, y: 0 };
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animate() {
+            const t = performance.now() * 0.001;
+
+            knot.rotation.x += 0.002;
+            knot.rotation.y += 0.003;
+            ring.rotation.z += 0.0018;
+
+            particles.rotation.y += 0.0006;
+            particles.rotation.x += 0.0002;
+
+            masterGroup.rotation.y += (mouse.x * 0.35 - masterGroup.rotation.y) * 0.03;
+            masterGroup.rotation.x += (-mouse.y * 0.2 - masterGroup.rotation.x) * 0.03;
+
+            floatingPanels.forEach((panel, i) => {
+                panel.position.y += Math.sin(t + i * 0.7) * 0.0017;
+                panel.rotation.z += 0.0015;
+            });
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        });
+
+        gsap.from('.nav', {
+            y: -80,
+            opacity: 0,
+            duration: 1.15,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero .eyebrow, .hero h1, .hero p, .hero-cta .btn', {
+            y: 42,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.1,
+            delay: 0.25,
+            ease: 'power3.out'
+        });
+
+        gsap.utils.toArray('section').forEach((section) => {
+            gsap.from(section.querySelectorAll('.card, .section-title, .eyebrow, h1, p, .btn'), {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.07,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 70%'
+                }
+            });
+        });
+
+        gsap.to(masterGroup.rotation, {
+            x: Math.PI * 1.4,
+            y: Math.PI * 1.8,
+            scrollTrigger: {
+                trigger: '.site',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1.2
+            }
+        });
+
+        gsap.to(camera.position, {
+            z: 5.4,
+            scrollTrigger: {
+                trigger: '#projects',
+                start: 'top center',
+                end: 'bottom center',
+                scrub: 1
+            }
+        });
+
+        const tiltCards = document.querySelectorAll('.tilt-card');
+        tiltCards.forEach((card) => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                const rx = (0.5 - y) * 8;
+                const ry = (x - 0.5) * 10;
+                card.style.transform = 'perspective(850px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-2px)';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(850px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            });
+        });
+    </script>
 </body>
 </html>
